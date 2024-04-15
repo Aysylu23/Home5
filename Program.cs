@@ -1,71 +1,80 @@
-﻿/*Доработайте программу калькулятор реализовав выбор 
- * действий и вывод результатов на экран в цикле так 
- * чтобы калькулятор мог работать до тех пор пока 
- * пользователь не нажмет отмена или введёт пустую строку.*/
-
-namespace Home5
+﻿namespace Home5
 {
     internal class Program
     {
         static void Calculator_GetResult(object sendler, EventArgs eventArgs)
         {
             Console.WriteLine($"{((Calculator)sendler).result}");
+            Console.WriteLine();
         }
-       
-      
+
+
         static void Main(string[] args)
         {
+            int number = 0;
+            string? action = "";
 
-            ICalculator calc =  new Calculator();
-
+            ICalculator calc = new Calculator();
             calc.GetResult += Calculator_GetResult;
 
-            while (true)
+            while (number != null)
             {
                 Console.WriteLine("Нажмите Enter если хотите продолжить, Esc если хотите выйти");
-
                 ConsoleKeyInfo btnRead = Console.ReadKey();
+               
                 
-                Console.WriteLine("Введите действие или нажмите для завершения \"q\".");
                 if (btnRead.Key == ConsoleKey.Escape)
                 {
                     break;
                 }
 
-                string? userEntered = Console.ReadLine();
-                if (userEntered != "q" || userEntered == "") break;
-               
-                string? newUserEntered = userEntered.Remove(0, 1);
+                Console.Write("Введите число: ");
+                string? input = Console.ReadLine();
+                if (input.Equals("q") || input.Equals("")) return;
 
-                if (int.TryParse(newUserEntered, out int value))
+                number = (int)ReadInt(input);
+
+                Console.Write("Введите арифметическое действие: ");
+                action = Console.ReadLine();
+                switch (action)
                 {
-                    switch (userEntered[0])
-                    {
-                        case '+':
-                            calc.Sum(value);
-                            break;
-
-                        case '-':
-                            calc.Substract(value);
-                            break;
-
-                        case '/':
-                            calc.Divide(value);
-                            break;
-
-                        case '*':
-                            calc.Multiply(value);
-                            break;
-
-                        default:
-                            Console.WriteLine("Вы не ввели дейсвие!");
-                            break;
-
-                    }
+                    case "+":
+                        calc.Sum(number);
+                        break;
+                    case "-":
+                        calc.Substract(number);
+                        break;
+                    case "*":
+                        calc.Multiply(number);
+                        break;
+                    case "/":
+                        calc.Divide(number);
+                        break;
+                    case "q":
+                        return;
+                    case "":
+                        return;
+                    default:
+                        Console.WriteLine("Неверное действие!");
+                        Console.WriteLine("Начните сначала.");
+                        Console.WriteLine();
+                        break;
                 }
-                else { Console.WriteLine("Введите знак действия с числом!"); }
-
-            }     
+            }
         }
+
+        private static double ReadInt(string? input)
+        {
+            int i;
+            while (!int.TryParse(input, out i))
+            {
+                Console.WriteLine("Это не число!");
+                Console.WriteLine("Введите число.");
+                input = Console.ReadLine();
+            }
+            return i;
+
+        }
+
     }
 }
